@@ -67,6 +67,7 @@ class ClickHouse(Dialect):
         FUNCTION_PARSERS = {
             **parser.Parser.FUNCTION_PARSERS,
             "QUANTILE": lambda self: self._parse_quantile(),
+            "TUPLE": lambda self: self._parse_struct(),
         }
 
         FUNCTION_PARSERS.pop("MATCH")
@@ -285,6 +286,7 @@ class ClickHouse(Dialect):
             + f"({self.sql(e, 'this')})",
             exp.RegexpLike: lambda self, e: f"match({self.format_args(e.this, e.expression)})",
             exp.StrPosition: lambda self, e: f"position({self.format_args(e.this, e.args.get('substr'), e.args.get('position'))})",
+            exp.Struct: lambda self, e: self.func("tuple", *e.expressions),
             exp.VarMap: lambda self, e: _lower_func(var_map_sql(self, e)),
         }
 
