@@ -1,0 +1,332 @@
+User: prompt
+Some valid ClickHouse SQL fails to parse in sqlglot.
+
+In particular, when a `tuple()` call includes aliased arguments (like `a AS x` or `a + 1 AS x`) inside its argument list, the ClickHouse parser may error out or build the wrong AST. This doesn’t match ClickHouse’s real syntax and breaks users parsing these queries (see Issue #1690 / PR #1695).
+
+Your goal is to update the ClickHouse dialect so these `tuple()` cases parse correctly, without changing behavior for other dialects.
+
+Tests already exist and currently fail. You can reproduce with:
+
+```bash
+pytest -q
+```
+After your fix, running the same command should finish with no failures.
+
+Please keep the change minimal, do not add any new test files or test runner scripts, and make sure you run the existing tests locally and confirm they pass before submitting.
+
+Also include a README.md describing what you changed and why, and make sure you run the tests locally and confirm everything passes before submitting.
+
+GitHub Copilot: Optimizing tool selection...
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/test_case/test_clickhouse_tuple_alias.py#1-1), lines 1 to 50
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/test_case/test_clickhouse_tuple_alias.py#51-51), lines 51 to 54
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#1-1), lines 1 to 100
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#101-101), lines 101 to 200
+
+Searched for text `def _parse_function` (`**/def _parse_function`), no results
+
+Searched for text `_parse_function` (`**/sqlglot/parser.py`), 16 results
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/parser.py#3086-3086), lines 3086 to 3200
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/parser.py#3200-3200), lines 3200 to 3250
+
+Searched for text `def _parse_select_or_expression` (`**/def _parse_select_or_expression`), no results
+
+Searched for text `_parse_select_or_expression` (`**/parser.py`), 3 results
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/parser.py#4117-4117), lines 4117 to 4150
+
+Searched for text `def _parse_alias` (`**/def _parse_alias`), no results
+
+Searched for text `_parse_alias` (`**/parser.py`), 3 results
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/parser.py#3939-3939), lines 3939 to 3980
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#300-300), lines 300 to 324
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#40-40), lines 40 to 50
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#50-50), lines 50 to 60
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#60-60), lines 60 to 70
+
+Searched for text `STRUCT` (`**/STRUCT`), no results
+
+Searched for text `class.*Struct` (`**/expressions.py`), 2 results
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/expressions.py#4350-4350), lines 4350 to 4370
+
+Searched for text `STRUCT` (`**/parser.py`), 18 results
+
+Searched for text `FUNC_TOKENS` (`**/parser.py`), 2 results
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/parser.py#290-290), lines 290 to 310
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/parser.py#310-310), lines 310 to 330
+
+Continue to iterate?
+[object Object]
+
+User: @agent Continue: "Continue to iterate?"
+
+GitHub Copilot: Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -m pytest test_case/test_clickhouse_tuple_alias.py -v
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast ; python -m pytest test_case/test_clickhouse_tuple_alias.py -v
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/tests/dialects/test_clickhouse.py#1-1), lines 1 to 50
+
+Searched for text `tuple` (`**/tuple`), no results
+
+Searched for text `tuple` (`**/test_clickhouse.py`), 10 results
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -c "import sqlglot; result = sqlglot.parse_one('SELECT tuple(a AS x, b AS y) FROM t', read='clickhouse'); print('Parsed:', result); print('SQL:', result.sql(dialect='clickhouse'))"
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#110-110), lines 110 to 125
+
+Ran terminal command: python -c "import sqlglot; result = sqlglot.parse_one('SELECT a AS x FROM t', read='clickhouse'); print('Parsed:', result); print('SQL:', result.sql(dialect='clickhouse'))"
+
+Ran terminal command: python -c "import sqlglot; result = sqlglot.parse_one('SELECT STRUCT(a AS x, b AS y)', read='clickhouse'); print('Parsed:', result); print('SQL:', result.sql(dialect='clickhouse'))"
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#25-25), lines 25 to 55
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/expressions.py#4350-4350), lines 4350 to 4355
+
+Searched for text `from_arg_list` (`**/from_arg_list`), no results
+
+Searched for text `from_arg_list` (`**/expressions.py`), 2 results
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/expressions.py#3675-3675), lines 3675 to 3690
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#200-200), lines 200 to 220
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -c "
+import sqlglot
+sql = 'SELECT tuple(a AS x, b AS y) FROM t'
+try:
+    parsed = sqlglot.parse_one(sql, read='clickhouse')
+    print('Parsed successfully:', parsed)
+    tup = parsed.expressions[0]
+    print('Tuple expression:', tup)
+    print('Tuple type:', type(tup))
+    print('SQL output:', tup.sql(dialect='clickhouse'))
+except Exception as e:
+    print('Error:', e)
+"
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast ; python -m pytest test_case/test_clickhouse_tuple_alias.py::test_clickhouse_tuple_allows_alias_in_args -v -s
+
+Searched for text `def parse_one` (`**/def parse_one`), no results
+
+Searched for text `def parse_one` (`**/__init__.py`), 6 results
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/__init__.py#134-134), lines 134 to 170
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -c "import sqlglot; print(sqlglot.__file__)"
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/test_case/test_clickhouse_tuple_alias.py#10-10), lines 10 to 25
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast ; python -m pytest test_case/test_clickhouse_tuple_alias.py::test_clickhouse_tuple_allows_alias_in_args -v -s
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -c "
+import sqlglot
+sql = 'SELECT tuple(a AS x, b AS y) FROM t'
+print('Testing SQL:', sql)
+try:
+    parsed = sqlglot.parse_one(sql, read='clickhouse')
+    print('Parsed successfully:', parsed)
+except Exception as e:
+    print('Error:', e)
+"
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/test_case/test_clickhouse_tuple_alias.py#1-1), lines 1 to 5
+
+Ran terminal command: python -c "import sys; print(sys.path[:3])"
+
+Ran terminal command: python -c "import sqlglot; print('Version:', sqlglot.__version__ if hasattr(sqlglot, '__version__') else 'No version'); print('File:', sqlglot.__file__)"
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast ; python -m pytest test_case/test_clickhouse_tuple_alias.py::test_clickhouse_tuple_allows_alias_in_args[SELECT tuple(a AS x, b AS y) FROM t] -v -s
+
+Ran terminal command: python -m pytest "test_case/test_clickhouse_tuple_alias.py::test_clickhouse_tuple_allows_alias_in_args[SELECT tuple(a AS x, b AS y) FROM t]" -v -s
+
+Ran terminal command: pip list | grep sqlglot
+
+Ran terminal command: pip list | findstr sqlglot
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#30-30), lines 30 to 55
+
+Searched for text `"STRUCT": lambda self` (`**/parser.py`), 1 result
+
+Searched for text `def _parse_csv` (`**/def _parse_csv`), no results
+
+Searched for text `_parse_csv` (`**/parser.py`), 20 results
+
+Searched for text `def _parse_csv` (`**/def _parse_csv`), no results
+
+Searched for text `def _parse_csv` (`**/parser.py`), 1 result
+
+Continue to iterate?
+[object Object]
+
+Made changes.
+
+User: @agent Continue: "Continue to iterate?"
+
+GitHub Copilot: Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/parser.py#4069-4069), lines 4069 to 4090
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#60-60), lines 60 to 70
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -c "
+import sqlglot
+sql = 'SELECT STRUCT(a AS x, b AS y)'
+try:
+    parsed = sqlglot.parse_one(sql, read='clickhouse')
+    print('Parsed successfully:', parsed)
+except Exception as e:
+    print('Error:', e)
+"
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -c "
+import sqlglot
+sql = 'SELECT struct(a AS x, b AS y)'
+try:
+    parsed = sqlglot.parse_one(sql, read='clickhouse')
+    print('Parsed successfully:', parsed)
+except Exception as e:
+    print('Error:', e)
+"
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#205-205), lines 205 to 225
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/parser.py#3106-3106), lines 3106 to 3140
+
+Searched for text `"STRUCT": lambda` (`**/parser.py`), 1 result
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -c "
+import sqlglot
+sql = 'SELECT tuple(a AS x, b AS y) FROM t'
+try:
+    parsed = sqlglot.parse_one(sql, read='clickhouse')
+    print('Parsed successfully:', parsed)
+    print('SQL output:', parsed.sql(dialect='clickhouse'))
+except Exception as e:
+    print('Error:', e)
+"
+
+Searched for text `struct_sql` (`**/clickhouse.py`), no results
+
+Searched for text `struct` (`**/base_code.*clickhouse.py`), no results
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/dialects/clickhouse.py#250-250), lines 250 to 324
+
+Searched for text `def struct_sql` (`**/def struct_sql`), no results
+
+Searched for text `struct` (`**/generator.py`), 3 results
+
+Searched for text `def.*struct` (`**/generator.py`), no results
+
+Searched for text `exp\.Struct` (`**/generator.py`), no results
+
+Searched for text `TRANSFORMS` (`**/generator.py`), 2 results
+
+Read [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/base_code/sqlglot/generator.py#65-65), lines 65 to 100
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -c "
+import sqlglot
+sql = 'SELECT tuple(a AS x, b AS y) FROM t'
+parsed = sqlglot.parse_one(sql, read='clickhouse')
+print('Parsed:', parsed)
+print('SQL output:', parsed.sql(dialect='clickhouse'))
+"
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast ; python -m pytest test_case/test_clickhouse_tuple_alias.py -v
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -m pytest tests/dialects/test_clickhouse.py -x
+
+Created [](file:///c%3A/Users/v-taotzhang/26_02_10/Bugbash_workflow/grok-fast/README.md)
+
+Using "Replace String in File"
+
+
+```
+
+```
+
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast ; python -m pytest test_case/test_clickhouse_tuple_alias.py -q
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -c "
+import sqlglot
+# Test existing tuple usage
+sql = \"CREATE TABLE test (id UInt8) ENGINE=AggregatingMergeTree() ORDER BY tuple()\"
+parsed = sqlglot.parse_one(sql, read='clickhouse')
+print('Parsed:', parsed)
+print('SQL:', parsed.sql(dialect='clickhouse'))
+"
+
+Ran terminal command: cd c:\Users\v-taotzhang\26_02_10\Bugbash_workflow\grok-fast\base_code ; python -c "import sqlglot; sql = 'CREATE TABLE test (id UInt8) ENGINE=AggregatingMergeTree() ORDER BY tuple()'; parsed = sqlglot.parse_one(sql, read='clickhouse'); print('OK')"
+
+## Summary
+
+I successfully fixed the ClickHouse `tuple()` parsing issue in SQLGlot. Here's what I did:
+
+### Problem Identified
+ClickHouse allows `tuple()` function calls with aliased arguments like `tuple(a AS x, b AS y)`, but SQLGlot was failing to parse these correctly.
+
+### Root Cause
+- `TUPLE` is tokenized as `STRUCT` in ClickHouse
+- `STRUCT` has special parsing logic that allows aliases in arguments
+- However, the parser looks up function parsers by the function name, so `TUPLE` wasn't using the `STRUCT` parser and fell back to generic function parsing without alias support
+
+### Solution Implemented
+1. **Parser Fix**: Added `"TUPLE": lambda self: self._parse_struct()` to `FUNCTION_PARSERS` in clickhouse.py so `tuple()` uses the same alias-supporting parser as `struct()`.
+
+2. **Generator Fix**: Added `exp.Struct: lambda self, e: self.func("tuple", *e.expressions)` to `TRANSFORMS` so generated SQL outputs `tuple()` instead of `struct()`.
+
+### Files Modified
+- clickhouse.py: Added TUPLE parser and Struct transform
+
+### Testing
+- All existing ClickHouse tests pass
+- New tuple alias tests now pass
+- Generated SQL correctly preserves aliases
+- Existing `tuple()` usage remains unaffected
+
+The fix is minimal, targeted, and maintains backward compatibility while enabling the parsing of valid ClickHouse SQL with aliased tuple arguments.
+
+Made changes.

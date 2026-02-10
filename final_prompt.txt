@@ -1,0 +1,17 @@
+prompt
+Some valid ClickHouse SQL fails to parse in sqlglot.
+
+In particular, when a `tuple()` call includes aliased arguments (like `a AS x` or `a + 1 AS x`) inside its argument list, the ClickHouse parser may error out or build the wrong AST. This doesn’t match ClickHouse’s real syntax and breaks users parsing these queries (see Issue #1690 / PR #1695).
+
+Your goal is to update the ClickHouse dialect so these `tuple()` cases parse correctly, without changing behavior for other dialects.
+
+Tests already exist and currently fail. You can reproduce with:
+
+```bash
+pytest -q
+```
+After your fix, running the same command should finish with no failures.
+
+Please keep the change minimal, do not add any new test files or test runner scripts, and make sure you run the existing tests locally and confirm they pass before submitting.
+
+Also include a README.md describing what you changed and why, and make sure you run the tests locally and confirm everything passes before submitting.
