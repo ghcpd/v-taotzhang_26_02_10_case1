@@ -207,6 +207,34 @@ class ClickHouse(Dialect):
         def _parse_function(
             self, functions: t.Optional[t.Dict[str, t.Callable]] = None, anonymous: bool = False
         ) -> t.Optional[exp.Expression]:
+            # Custom handling for tuple() to allow aliases inside its arguments
+            if self._curr and self._curr.text.upper() == "TUPLE":
+                # consume function name and the opening parenthesis
+                this = self._curr.text
+                self._advance(2)  # advance past 'TUPLE' and '('
+
+                args: t.List[t.Optional[exp.Expression]] = []
+                # handle empty tuple
+                if self._match(TokenType.R_PAREN):
+                    return self.expression(exp.Tuple, expressions=args)
+
+                while True:
+                    # parse each argument as a full expression
+                    expr = self._parse_expression()
+                    # if there's an alias for this argument, parse it
+                    if self._match(TokenType.ALIAS):
+                        alias = self._parse_id_var()
+                        if alias:
+                            expr = self.expression(exp.Alias, this=expr, alias=alias)
+                    args.append(expr)
+                    if self._match(TokenType.COMMA):
+                        continue
+                    break
+
+                self._match_r_paren()
+                return self.expression(exp.Tuple, expressions=args)
+
+            # fallback to default ClickHouse parsing
             func = super()._parse_function(functions, anonymous)
 
             if isinstance(func, exp.Anonymous):
