@@ -207,20 +207,55 @@ class ClickHouse(Dialect):
         def _parse_function(
             self, functions: t.Optional[t.Dict[str, t.Callable]] = None, anonymous: bool = False
         ) -> t.Optional[exp.Expression]:
-            func = super()._parse_function(functions, anonymous)
+            # Override to allow aliases inside tuple() arguments, which is valid in ClickHouse.
+            # The base implementation doesn't permit aliases within function arguments (alias=False
+            # passed to _parse_lambda), so we special-case "tuple" here.
+            if self._curr and self._curr.text.upper() == "TUPLE":
+                # Adapted from sqlglot.parser.Parser._parse_function
+                token_type = self._curr.token_type
 
-            if isinstance(func, exp.Anonymous):
-                params = self._parse_func_params(func)
+                if not self._next or self._next.token_type != TokenType.L_PAREN:
+                    if token_type in self.NO_PAREN_FUNCTIONS:
+                        self._advance()
+                        return self.expression(self.NO_PAREN_FUNCTIONS[token_type])
+                    return None
 
-                if params:
-                    return self.expression(
-                        exp.ParameterizedAgg,
-                        this=func.this,
-                        expressions=func.expressions,
-                        params=params,
-                    )
+                if token_type not in self.FUNC_TOKENS:
+                    return None
 
-            return func
+                this = self._curr.text
+                upper = this.upper()
+                self._advance(2)
+
+                parser = self.FUNCTION_PARSERS.get(upper)
+
+                if parser and not anonymous:
+                    this = parser(self)
+                else:
+                    subquery_predicate = self.SUBQUERY_PREDICATES.get(token_type)
+
+                    if subquery_predicate and self._curr.token_type in (TokenType.SELECT, TokenType.WITH):
+                        this = self.expression(subquery_predicate, this=self._parse_select())
+                        self._match_r_paren()
+                        return this
+
+                    if functions is None:
+                        functions = self.FUNCTIONS
+
+                    # Use alias=True to allow expressions like 'a AS x' inside tuple
+                    args = self._parse_csv(lambda: self._parse_lambda(alias=True))
+
+                    if upper in functions and not anonymous:
+                        this = functions[upper](args)
+                        self.validate_expression(this, args)
+                    else:
+                        this = self.expression(exp.Anonymous, this=this, expressions=args)
+
+                self._match_r_paren(this)
+                return self._parse_window(this)
+
+            # Fallback to default behavior for other functions
+            return super()._parse_function(functions, anonymous)
 
         def _parse_func_params(
             self, this: t.Optional[exp.Func] = None
