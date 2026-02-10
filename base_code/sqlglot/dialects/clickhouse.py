@@ -67,6 +67,7 @@ class ClickHouse(Dialect):
         FUNCTION_PARSERS = {
             **parser.Parser.FUNCTION_PARSERS,
             "QUANTILE": lambda self: self._parse_quantile(),
+            "TUPLE": lambda self: self._parse_tuple(),
         }
 
         FUNCTION_PARSERS.pop("MATCH")
@@ -239,6 +240,14 @@ class ClickHouse(Dialect):
             if params:
                 return self.expression(exp.Quantile, this=params[0], quantile=this)
             return self.expression(exp.Quantile, this=this, quantile=exp.Literal.number(0.5))
+
+        def _parse_tuple(self) -> exp.Expression:
+            """
+            Parse tuple() function arguments, which allow aliases in ClickHouse.
+            tuple(a AS x, b AS y) is valid in ClickHouse.
+            """
+            args = self._parse_csv(lambda: self._parse_lambda(alias=True))
+            return self.expression(exp.Anonymous, this="tuple", expressions=args)
 
         def _parse_wrapped_id_vars(
             self, optional: bool = False
